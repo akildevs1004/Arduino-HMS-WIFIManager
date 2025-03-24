@@ -1,0 +1,267 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Device Settings</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background-color: #f5f5f5;
+      margin: 0;
+      padding: 0;
+    }
+
+    .header {
+      background-color: #1c3b50;
+      color: white;
+      padding: 10px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+
+    .header img {
+      height: 40px;
+    }
+
+    .header .time {
+      font-size: 20px;
+    }
+
+    .container {
+      margin: 20px;
+      background-color: white;
+      border-radius: 8px;
+      box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+      padding: 20px;
+    }
+
+    h1 {
+      font-size: 24px;
+      margin: 0 0 20px;
+    }
+
+    .filter {
+      display: flex;
+      justify-content: space-between;
+      margin-bottom: 20px;
+    }
+
+    .filter select,
+    .filter input[type="date"] {
+      padding: 5px;
+      font-size: 16px;
+    }
+
+    .filter .date-range {
+      display: flex;
+      align-items: center;
+    }
+
+    .filter .date-range input {
+      margin-left: 10px;
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+    }
+
+    table,
+    th,
+    td {
+      border: 1px solid #ddd;
+    }
+
+    th,
+    td {
+      padding: 10px;
+      text-align: left;
+    }
+
+    th {
+      background-color: #f2f2f2;
+    }
+
+    .pagination {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-top: 20px;
+    }
+
+    .pagination select {
+      padding: 5px;
+      font-size: 16px;
+    }
+  </style>
+</head>
+
+<body>
+  <div class="header">
+    <img src="http://{{ipAddress}}/logo" alt="Logo">
+
+    <div>{{ipAddress}}</div>
+
+    <div>SN:{{SerialNumber}}</div>
+    <div class="time">   <div id="time">Loading time...</div></div>
+  </div>
+  <div class="container">
+    <h1>Device Configuration /Settings</h1>
+
+    <div class="container">
+
+      <form action="/save_config" method="POST" id="configForm">
+        <table>
+          <tr>
+            <td><label for="serverURL">Server URL:</label></td>
+            <td><input style="width:400px" type="text" id="serverURL" name="serverURL" value="{{serverURL}}" required><br><br>
+     </td>
+          </tr>
+          <tr>
+            <td><label for="serverURL1">Heartbeat Interval(Seconds):</label></td>
+            <td> <input type="number" id="intervalHeartbeat" name="intervalHeartbeat" value="{{intervalHeartbeat}}" required><br><br></td>
+          </tr>
+          <tr>
+            <td><label for="serverURL2">Wifi SSID:</label></td>
+            <td> <input type="text" id="wifiSSID" name="wifiSSID" value="{{wifiSSID}}" required><br><br></td>
+          </tr>
+          <tr>
+            <td><label for="serverURL3">Wifi Password:</label></td>
+            <td><input type="text" id="wifiPassword" name="wifiPassword" value="{{wifiPassword}}" required><br><br></td>
+          </tr>
+          <tr>
+            <td><label for="serverURL3">Socket IP address:</label></td>
+            <td><input type="text" id="server_ip" name="server_ip" value="{{server_ip}}" required><br><br></td>
+          </tr>
+          <tr>
+            <td><label for="serverURL3">Socket Port :</label></td>
+            <td><input type="text" id="server_port" name="server_port" value="{{server_port}}" required><br><br>
+            
+            <div id="socketConnectionStatus"></div>
+            </td>
+          </tr>
+           <tr>
+            <td><label for="serverURL3">GMT Time:</label></td>
+            <td><input type="text" id="gmtTimeZone" name="gmtTimeZone" value="{{gmtTimeZone}}" required><br><br></td>
+          </tr>
+           <tr>
+            <td><label for="serverURL3">Serial Number:</label></td>
+            <td><input type="text" id="SerialNumber" name="SerialNumber" value="{{SerialNumber}}" required><br><br></td>
+          </tr>
+          <tr>
+            <td> </td>
+            <td><input type="submit" value="Save"></td>
+          </tr>
+        </table>
+
+      </form>
+    </div>
+
+  </div>
+</body>
+<script>
+function loadConfigDetails()
+{
+ document.addEventListener('DOMContentLoaded', function() {
+      fetch('/config.json')
+        .then(response => response.json())
+        .then(data => {
+          // Update form fields with data from config.json
+          console.log(data);
+          document.getElementById('serverURL').value = data.serverURL || '';
+         // document.getElementById('SerialNumber').value = data.SerialNumber || '';
+          document.getElementById('wifiSSID').value = data.wifiSSID || '';
+          document.getElementById('wifiPassword').value = data.wifiPassword || '';
+           document.getElementById('wifiSSID').value = data.wifiSSID || '';
+            document.getElementById('wifiPassword').value = data.wifiPassword || '';
+             document.getElementById('intervalHeartbeat').value = data.intervalHeartbeat  || '';
+              document.getElementById('server_port').value = data.server_port || '';
+              document.getElementById('server_ip').value = data.server_ip || '';
+
+               document.getElementById('gmtTimeZone').value = data.gmtTimeZone || '';
+
+                document.getElementById('socketConnectionStatus').innerHTML = data.socketConnectionStatus || '----';
+        })
+        .catch(error => {
+          console.error('Error loading config.json:', error);
+        });
+    });
+}
+   
+  </script>
+
+  <script>
+        function updateTime() {
+            const now = new Date();
+            const hours = now.getHours().toString().padStart(2, '0');
+            const minutes = now.getMinutes().toString().padStart(2, '0');
+            const seconds = now.getSeconds().toString().padStart(2, '0');
+
+            // Format the time as HH:MM:SS
+            const timeString = `${hours}:${minutes}:${seconds}`;
+
+            // Display the time in the HTML element
+            document.getElementById('time').textContent = timeString;
+        }
+
+        // Update time immediately
+        updateTime();
+
+        // Update time every second (1000 milliseconds)
+        setInterval(updateTime, 1000);
+    </script>
+
+
+    <script>
+      document.addEventListener("DOMContentLoaded", function () {
+ setInterval(loadConfigDetails(), 1000*10);
+
+   });
+
+document.addEventListener("DOMContentLoaded", function () {
+            // Get the form element
+            const form = document.getElementById("configForm");
+
+            // Add a submit event listener to the form
+            form.addEventListener("submit", function (event) {
+                event.preventDefault(); // Prevent the default form submission
+
+                // Create a FormData object to capture form data
+                const formData = new FormData(form);
+
+                // Convert the FormData object to a URL-encoded string
+                const formParams = new URLSearchParams(formData).toString();
+
+                // Send a POST request with form data as x-www-form-urlencoded
+                fetch("/save_config", {
+                    method: "POST",
+                    headers: {
+                        "Content-Type": "application/x-www-form-urlencoded", // Send data as x-www-form-urlencoded
+                    },
+                    body: formParams, // Use URL-encoded string as the body
+                })
+                .then(response => {
+                    if (response.ok) {
+                        return response.text(); // Assuming the server responds with HTML
+                    } else {
+                        throw new Error("Network response was not ok.");
+                    }
+                })
+                .then(data => {
+                    // Handle successful response here
+                    console.log("Success:", data);
+                    alert("Configuration saved successfully!");
+                })
+                .catch(error => {
+                    // Handle errors here
+                    console.error("Error:", error);
+                    alert("There was an error saving the configuration.");
+                });
+            });
+        });
+
+    </script>
+</html>

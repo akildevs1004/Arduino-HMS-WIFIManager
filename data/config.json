@@ -1,0 +1,11 @@
+{
+  "serverURL": "https://backend.myhotel2cloud.com/api/update_device_room_fill_status",
+  "wifiSSID": "Akil",
+  "wifiPassword": "Akil1234",
+  "intervalHeartbeat": 60,
+  "server_ip": "64.227.164.43",
+  "server_port": "6002",
+  "gmtTimeZone": "444",
+  "socketConnectionStatus": "Disconencted",
+  "SerialNumber":"TNJ000020"
+}
